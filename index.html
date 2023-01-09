@@ -4,8 +4,10 @@
     <title>Session 10. Multiple linear regression</title>
     <meta charset="utf-8" />
     <meta name="author" content="Wu Zeng, MD, PhD" />
-    <script src="libs/header-attrs-2.14/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.18/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/rladies.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/rladies-fonts.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.2.6/panelset.js"></script>
     <script src="libs/fabric-4.3.1/fabric.min.js"></script>
@@ -14,8 +16,6 @@
     <script>document.addEventListener('DOMContentLoaded', function() { window.xeScribble = new Scribble({"pen_color":["#FF0000"],"pen_size":3,"eraser_size":30,"palette":[]}) })</script>
     <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
     <script src="libs/tile-view-0.2.6/tile-view.js"></script>
-    <link rel="stylesheet" href="libs/css/default-fonts.css" type="text/css" />
-    <link rel="stylesheet" href="libs/css/my-red.css" type="text/css" />
     <link rel="stylesheet" href="libs/css/hygge-gu.css" type="text/css" />
   </head>
   <body>
@@ -60,7 +60,7 @@ class: title-slide, center, middle, inverse
 ---
 # Model specification 
 
-`$$y_i = \beta_0 + \beta_1x_1 + \beta_2x2 + ... + \beta_mx_m + u_i$$`
+`$$y_i = \beta_0 + \beta_1x_1 + \beta_2x2 + ... + \beta_px_p + u_i$$`
 `$$y_i = \hat{y_1} + u_i$$`
 `$$\hat{y_1} = \beta_0 + \beta_1x_1 + \beta_2x2 + ... + \beta_px_p$$`
 
@@ -86,11 +86,11 @@ OLS can be still used to estimate all `\(\beta\)`s
 
 &lt;br&gt; 
 
-&gt; percentage of variance (variation) of yi are explained by Xs
+&gt; percentage of variance (variation) of `\(y_i\)` are explained by `\(xs\)`
 
 &lt;br&gt;
 
-However, with more independent variables in the model, `\(R^2\)` will keep increase even the independent variable has very small explanation power. 
+However, with more independent variables in the model, `\(R^2\)` will keep increasing even the independent variable has very small explanation power. 
 
 `$$\text{Adjusted }R^2 = 1-\frac{(1-R^2)(n-1)}{n-p-1}$$`
 where 
@@ -100,29 +100,510 @@ where
 `\(p\)` number of independent variables
 
 ---
-
 # Test of model
 
+F test is used to test the overall goodness of the fit
+
+&lt;br&gt;
+
+
+&gt; determine whether a significant relationship exists between the dependent variable and the set of .red[all] the independent variables.
+
+---
+
+# F test process
+
+.pull-left[
+
+`\(H_0\)`:  `\(\beta1 = \beta2 = ... = \beta p  = 0\)`
+
+`\(H_1\)`: .red[One or more] of the parameters is not equal to zero.
+
+Statistics 
+
+`$$F = MSE/MSR$$`
+
+Reject `\(H_0\)` if `\(p &lt; \alpha\)`  or if `\(F  &gt; F_{(\alpha, df1, df2)}\)`, where `\(F_{(\alpha, df1, df2)}\)` is based on an `\(F\)` distribution with 
+
+- degree of freedom of `\(p\)` in the numerator, `\(p\)` is the number of independent variables 
+
+- degree of freedom of `\(n - p - 1\)`  in the denominator.
+]
+
+.pull-right[
+
+&lt;img src="index_files/figure-html/unnamed-chunk-1-1.png" height="500" style="display: block; margin: auto;" /&gt;
+]
+---
+
+# Example
+
+
+```
+
+Call:
+lm(formula = mpg ~ am + hp + wt, data = mtcars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.4221 -1.7924 -0.3788  1.2249  5.5317 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 34.002875   2.642659  12.867 2.82e-13 ***
+am           2.083710   1.376420   1.514 0.141268    
+hp          -0.037479   0.009605  -3.902 0.000546 ***
+wt          -2.878575   0.904971  -3.181 0.003574 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.538 on 28 degrees of freedom
+*Multiple R-squared:  0.8399,	Adjusted R-squared:  0.8227 
+*F-statistic: 48.96 on 3 and 28 DF,  p-value: 2.908e-11
+```
 
 ---
 
 # Test of individual coefficents 
 
 
+.pull-left[
+
+`\(H_0: \beta_i = 0\)` 
+
+`\(H_1: \beta_i \neq 0\)`
+
+.red[Statistics]
+
+`\(t = \hat{\beta_i}/se_{\hat{\beta_i}}\)`
+
+Reject `\(H_0\)` if `\(p &lt; \alpha\)`  or if `\(t &lt; t_{(\alpha, df)}\)` 
+
+where
+
+`\(t_{(\alpha, df)}\)` is .red[cut-off] based on a `\(t\)` distribution with
+
+- degrees of freedom of .red[n - p - 1]
+]
+
+.pull-right[
+
+
+```
+
+Call:
+lm(formula = mpg ~ am + hp + wt, data = mtcars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.4221 -1.7924 -0.3788  1.2249  5.5317 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 34.002875   2.642659  12.867 2.82e-13 ***
+am           2.083710   1.376420   1.514 0.141268    
+hp          -0.037479   0.009605  -3.902 0.000546 ***
+*wt          -2.878575   0.904971  -3.181 0.003574 ** 
 ---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.538 on 28 degrees of freedom
+Multiple R-squared:  0.8399,	Adjusted R-squared:  0.8227 
+F-statistic: 48.96 on 3 and 28 DF,  p-value: 2.908e-11
+```
+]
+
+---
+
 # Interpretation of coefficients
 
-Holding other variables constant, the interpretation of coefficient is the same as the simple regression. 
+&gt; `\(\beta_i\)` represents an estimate of the .red[change in] `\(y\)`
+&gt; corresponding to a .red[1-unit] increase in `\(x_i\)` when .red[all other independent variables] are held .red[constant].
+
+
+```
+
+Call:
+lm(formula = mpg ~ am + hp + wt, data = mtcars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.4221 -1.7924 -0.3788  1.2249  5.5317 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 34.002875   2.642659  12.867 2.82e-13 ***
+am           2.083710   1.376420   1.514 0.141268    
+hp          -0.037479   0.009605  -3.902 0.000546 ***
+*wt          -2.878575   0.904971  -3.181 0.003574 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.538 on 28 degrees of freedom
+Multiple R-squared:  0.8399,	Adjusted R-squared:  0.8227 
+F-statistic: 48.96 on 3 and 28 DF,  p-value: 2.908e-11
+```
 
 ---
 
-# Example
+# Multiple regression with dummy independent variables 
+
+.pull-left[
+
+`mtcars` dataset
+
+Model specification
+
+- `\(mpg = \beta_0 + \beta_1weight + \beta_2(\text{type of engine})\)`
+
+- `wt` measures the weight of cars
+
+- `am` denote the type of engine (0 = v-shaped, 1 = straight)
+
+let us explore the dataset first 
+
+
+```r
+p1 &lt;- ggplot(data = mtcars, mapping = 
+         aes(x = wt, y = mpg, color = factor(vs))) +
+  geom_point(size = 3) + 
+  labs(x = "Weight", color = "Type of engine") +
+  scale_color_discrete(labels = c("V-shaped", "Straight")) +
+  theme_classic() +
+  theme(legend.position = "bottom", 
+        text = element_text(size = 20))
+p1
+```
+
+]
+
+.pull-right[
+
+&lt;img src="index_files/figure-html/dtaexp1-1.png" style="display: block; margin: auto;" /&gt;
+
+]
 
 ---
 
+# Continue
+
+.pull-left[
+
+`\(mpg = \beta_0 + \beta_1weight + \beta_2(\text{type of transmission})\)`
+
+`\(mpg_{automatic} = \beta_0 + \beta_1weight + \beta_2*0 = \beta_0 + \beta_1weight\)`
+
+`\(mpg_{manual} = \beta_0 + \beta_1weight + \beta_2*1 = (\beta_0+\beta2) + \beta_1weight\)`
+
+Two straight lines with .red[different intercepts], but the .red[same slope]. 
+
+
+```
+
+Call:
+lm(formula = mpg ~ wt + vs, data = mtcars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.7071 -2.4415 -0.3129  1.4319  6.0156 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  33.0042     2.3554  14.012 1.92e-14 ***
+wt           -4.4428     0.6134  -7.243 5.63e-08 ***
+vs            3.1544     1.1907   2.649   0.0129 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.78 on 29 degrees of freedom
+Multiple R-squared:  0.801,	Adjusted R-squared:  0.7873 
+F-statistic: 58.36 on 2 and 29 DF,  p-value: 6.818e-11
+```
+]
+
+.pull-right[
+
+&lt;img src="index_files/figure-html/pdummy-1.png" style="display: block; margin: auto;" /&gt;
+]
 
 ---
 
+# Multiple regress with categorical variables 
+
+ &gt; `mtcars`, number of cylinder has only .red[three levels] in the dataset, it cannot be treated as a continous variable. Instead, it should be treated as a categorical variable
+ 
+.pull-left[
+
+```
+# A tibble: 3 × 2
+  cylf   mmpg
+  &lt;fct&gt; &lt;dbl&gt;
+1 4      26.7
+2 6      19.7
+3 8      15.1
+```
+
+```
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = mpg ~ cylf, data = ndt3)
+
+$cylf
+          diff        lwr        upr     p adj
+6-4  -6.920779 -10.769350 -3.0722086 0.0003424
+8-4 -11.563636 -14.770779 -8.3564942 0.0000000
+8-6  -4.642857  -8.327583 -0.9581313 0.0112287
+```
+]
+
+.pull-right[
+
+
+
+
+```r
+ndt3 &lt;- mtcars %&gt;%
+  mutate(cylf = factor(cyl)) 
+lm(mpg ~ cylf, data = ndt3)
+```
+
+```
+
+Call:
+lm(formula = mpg ~ cylf, data = ndt3)
+
+Coefficients:
+(Intercept)        cylf6        cylf8  
+     26.664       -6.921      -11.564  
+```
+
+it created two dummy variables `cylf6` and `cylf8`, and use `cylf4` as reference
+
+`\(mpg = \beta_0 + \beta_1cylf6 + \beta_2cylf8\)`
+]
+ 
+---
+
+# Adding other co-variates
+
+Model specification: `\(mpg = \beta_0 + \beta_1weight + \beta_2\text{type of transmission} + \beta_3\text{type of engine} + \beta_4{cylinder}\)`
+
+.pull-left[
+
+```r
+ndt3 &lt;- mtcars %&gt;%
+  mutate(cylf = factor(cyl)) 
+lm(mpg ~ wt + am + vs + cylf, data = ndt3) %&gt;%
+  summary()
+```
+]
+
+.pull-right[
+
+
+```
+
+Call:
+lm(formula = mpg ~ wt + am + vs + cylf, data = ndt3)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.2664 -1.2947 -0.3387  1.3908  5.5535 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  32.1811     3.7286   8.631 4.14e-09 ***
+wt           -3.1061     0.9203  -3.375  0.00233 ** 
+am            0.6232     1.5012   0.415  0.68144    
+vs            1.2418     1.9042   0.652  0.52004    
+cylf6        -3.7329     1.6376  -2.280  0.03108 *  
+cylf8        -4.7483     2.6572  -1.787  0.08561 .  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.631 on 26 degrees of freedom
+Multiple R-squared:  0.8401,	Adjusted R-squared:  0.8094 
+F-statistic: 27.33 on 5 and 26 DF,  p-value: 1.417e-09
+```
+]
+
+---
+
+# Multiple regression with interaction terms
+
+- Previously, we examined `\(mpg = \beta_0 + \beta_1weight + \beta_2(\text{type of engine})\)`
+
+- Now, - `\(mpg = \beta_0 + \beta_1weight + \beta_2(\text{type of engine}) + \beta_3weight*\text{type of engine}\)`
+
+.pull-left[
+
+```r
+lm(mpg ~ wt*vs, data = mtcars) %&gt;%
+  summary()
+```
+
+&lt;img src="index_files/figure-html/pdummy-1.png" height="350" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+
+
+```
+
+Call:
+lm(formula = mpg ~ wt * vs, data = mtcars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.9950 -1.7881 -0.3423  1.2935  5.2061 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  29.5314     2.6221  11.263 6.55e-12 ***
+wt           -3.5013     0.6915  -5.063 2.33e-05 ***
+vs           11.7667     3.7638   3.126   0.0041 ** 
+*wt:vs        -2.9097     1.2157  -2.393   0.0236 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.578 on 28 degrees of freedom
+Multiple R-squared:  0.8348,	Adjusted R-squared:  0.8171 
+F-statistic: 47.16 on 3 and 28 DF,  p-value: 4.497e-11
+```
+]
+---
+
+# How to interpret coefficients for variables with the interaction term 
+
+`\(mpg = \beta_0 + \beta_1weight + \beta_2(\text{type of engine}) + \beta_3weight*\text{type of engine}\)`
+
+.pull-left[
+
+
+```
+
+Call:
+lm(formula = mpg ~ wt * vs, data = mtcars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.9950 -1.7881 -0.3423  1.2935  5.2061 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  29.5314     2.6221  11.263 6.55e-12 ***
+wt           -3.5013     0.6915  -5.063 2.33e-05 ***
+vs           11.7667     3.7638   3.126   0.0041 ** 
+*wt:vs        -2.9097     1.2157  -2.393   0.0236 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.578 on 28 degrees of freedom
+Multiple R-squared:  0.8348,	Adjusted R-squared:  0.8171 
+F-statistic: 47.16 on 3 and 28 DF,  p-value: 4.497e-11
+```
+]
+
+.pull-right[
+
+The impact of `weight` and `type of engine` on `mpg` is .red[not] a constant. They depends on each other. 
+
+`\(\beta_1\)` is the impact of weight on `mpg` when `type of engine = 0`
+
+`\(\beta_2\)` is the impact of the `type of engine` on `mpg` when `weight = 0`
+
+.red[Marginal effect]:
+
+`\(\frac{\partial (mpg)}{\partial (weight)} = \beta_1 + \beta_3*\text{type of engine}\)`
+
+`\(\frac{\partial (mpg)}{\partial (\text{type of engine})} = \beta_2 + \beta_3*\text{weight}\)`
+
+]
+---
+
+# Multicollinearity 
+
+- The term of .red[multicollinearity] refers to the correlation among the .red[independent variables].
+
+- In multiple regression model, the independent variables should not be .red[highly] correlated. 
+
+Potential three consequences 
+
+- The model cannot be estimated 
+
+- the standard error of correlated variables are extremely large 
+
+- the signs of correlated variables are not in the expected direction
+
+Variance inflation factor (VIF) is used to check the existence of multicollinearity 
+
+---
+
+# Measurement of multicollinearity 
+
+.pull-left[
+
+`$$VIF = \frac{1}{1-R^2_i}$$`
+
+where 
+
+`$$R^2_1 \text{ is estimated from } x_i = \beta_0 + \beta x_{others}$$`
+There is no unanimous cut-off of VIF. I use `10`
+
+What do we do if there are variables with large VIF 
+
+- Delete one of correlated variables
+
+- Combine correlated variables using different approaches
+
+`r` command 
+
+`vif(model)` in the package of `car`
+]
+
+.pull-right[
+
+
+```r
+#install.packages("car")
+ndt3 &lt;- mtcars %&gt;%
+  mutate(cylf = factor(cyl)) 
+lmres &lt;- lm(mpg ~ wt + am + vs + cylf, data = ndt3) 
+car::vif(lmres)
+```
+
+```
+         GVIF Df GVIF^(1/(2*Df))
+wt   3.630316  1        1.905339
+am   2.512374  1        1.585047
+vs   4.124032  1        2.030771
+cylf 6.424665  2        1.592072
+```
+
+]
+---
+# Diangostic test (focus on residuals)
+
+Residual plot against `\(\hat{y}\)`to determine if the model assumptions are satisfied.
+
+.left-column[
+
+
+```r
+par(mfrow=c(2,2))
+plot(lmres)
+```
+]
+
+.right-column[
+
+&lt;img src="index_files/figure-html/dia1-1.png" height="450" style="display: block; margin: auto;" /&gt;
+]
+
+---
+
+# Group excercise
 
 ---
 class: middle, center, inverse
