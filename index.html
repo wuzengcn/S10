@@ -43,13 +43,17 @@ class: title-slide, center, middle, inverse
 
 # Contents 
 
-1. Model specificaiton 
+1. Model specification 
 
-2. With dummy variables 
+1. Goodness of fit 
 
-3. With categorical variables 
+2. Test of model and coefficients
 
-4. Interaction terms 
+2. MLR with dummy variables 
+
+3. MLR with categorical variables 
+
+4. MLR with interaction terms 
 
 5. Regression diagnostics (Normality, independence, multicolinearity)
 
@@ -57,13 +61,16 @@ class: title-slide, center, middle, inverse
 # Model specification 
 
 `$$y_i = \beta_0 + \beta_1x_1 + \beta_2x2 + ... + \beta_mx_m + u_i$$`
+`$$y_i = \hat{y_1} + u_i$$`
+`$$\hat{y_1} = \beta_0 + \beta_1x_1 + \beta_2x2 + ... + \beta_px_p$$`
+
 Assumptions 
 
 1. Linearity 
 
 2. Independence 
 
-3. Conditional means of `\(u_i\)` = 0: `\(E(u_i|x1...x_m) = 0\)`
+3. Conditional means of `\(u_i\)` = 0: `\(E(u_i|x1...x_p) = 0\)`
 
 4. Constant variance of `\(u_i\)`
 
@@ -71,11 +78,50 @@ Assumptions
 
 ---
 
+# Estimation approach and goodness of fit 
+
+OLS can be still used to estimate all `\(\beta\)`s
+
+`\(R^2\)` remains a good measure of the goodness of fit of the model, and has the same meaning as that in the simply regression 
+
+&lt;br&gt; 
+
+&gt; percentage of variance (variation) of yi are explained by Xs
+
+&lt;br&gt;
+
+However, with more independent variables in the model, `\(R^2\)` will keep increase even the independent variable has very small explanation power. 
+
+`$$\text{Adjusted }R^2 = 1-\frac{(1-R^2)(n-1)}{n-p-1}$$`
+where 
+
+`\(n\)` is sample size;
+
+`\(p\)` number of independent variables
+
+---
+
+# Test of model
+
+
+---
+
+# Test of individual coefficents 
+
+
+---
 # Interpretation of coefficients
 
 Holding other variables constant, the interpretation of coefficient is the same as the simple regression. 
 
+---
 
+# Example
+
+---
+
+
+---
 
 
 ---
