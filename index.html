@@ -4,14 +4,24 @@
     <title>Session 10. Multiple linear regression</title>
     <meta charset="utf-8" />
     <meta name="author" content="Wu Zeng, MD, PhD" />
-    <script src="libs/header-attrs-2.18/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.14/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset-0.2.6/panelset.js"></script>
+    <script src="libs/fabric-4.3.1/fabric.min.js"></script>
+    <link href="libs/xaringanExtra-scribble-0.0.1/scribble.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-scribble-0.0.1/scribble.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function() { window.xeScribble = new Scribble({"pen_color":["#FF0000"],"pen_size":3,"eraser_size":30,"palette":[]}) })</script>
+    <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view-0.2.6/tile-view.js"></script>
     <link rel="stylesheet" href="libs/css/default-fonts.css" type="text/css" />
     <link rel="stylesheet" href="libs/css/my-red.css" type="text/css" />
     <link rel="stylesheet" href="libs/css/hygge-gu.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
+
+
 
 class: title-slide, center, middle, inverse
 
@@ -30,49 +40,44 @@ class: title-slide, center, middle, inverse
 ### March 10 2022
 
 ---
-class: top
 
-# Slides 1
+# Contents 
 
-.pull-left[
+1. Model specificaiton 
 
-- #### Create a dataset
+2. With dummy variables 
 
-- #### Create a new variables
+3. With categorical variables 
 
-- #### Recode variables
+4. Interaction terms 
 
-- #### Rename variables
-
-- #### Missing values
-]
-.pull-right[
-- #### Date values
-
-- #### Type conversions
-
-- #### Sort data
-
-- #### Merge data
-
-- #### subset dataset
-]
----
+5. Regression diagnostics (Normality, independence, multicolinearity)
 
 ---
-# Using different approach 
+# Model specification 
 
-For data management, we will use package of tidyverse 
+`$$y_i = \beta_0 + \beta_1x_1 + \beta_2x2 + ... + \beta_mx_m + u_i$$`
+Assumptions 
 
-If you have not install tidyverse, please use the command of 
+1. Linearity 
 
-.red[install.packages("tidyverse")]
+2. Independence 
 
-To install it, and then use 
+3. Conditional means of `\(u_i\)` = 0: `\(E(u_i|x1...x_m) = 0\)`
 
-.red[library(tidyverse)]
+4. Constant variance of `\(u_i\)`
 
-to load the package
+5. No multicolinearity among `\(xs\)`
+
+---
+
+# Interpretation of coefficients
+
+Holding other variables constant, the interpretation of coefficient is the same as the simple regression. 
+
+
+
+
 ---
 class: middle, center, inverse
 
