@@ -37,7 +37,7 @@ class: title-slide, center, middle, inverse
 
 #### Georgetown University
 
-### March 10 2022
+### March 27 2022
 
 ---
 
@@ -605,7 +605,7 @@ plot(lmres)
 
 # Choose among many models 
 
-- Adjusted `\(R2\)`
+- Adjusted `\(R^2\)`
 
 - AIC (the smaller the better): `AIC(model)`
 
@@ -659,20 +659,98 @@ table {
 
 # Group excercise
 
+use the data from http://people.brandeis.edu/~wuzengcn/ecodata/WAGE2.DTA. Import data into r
+
+
+```r
+wagedta &lt;- foreign::read.dta("http://people.brandeis.edu/~wuzengcn/ecodata/WAGE2.DTA")
+```
+
+.pull-left[
+
+`wage`: Monthly earnings
+
+`hours`: average weekly hours
+
+`IQ`: IQ score
+
+`KWW`: knowledge of world work score
+
+`educ`: years of education 
+
+`exper`: years of work experience
+
+`tenure`: years with current employer
+
+`age` : ae in years
+
+]
+
+.pull-right[
+`married`: = 1 if married
+
+`black`: = 1 if black
+
+`south`: = 1 if live in south
+
+`urban`: =1 if live in urban areas
+
+`sibs`: number of siblings
+
+`brthord`: birth order 
+
+`meduc`: mother's education
+
+`feduc`: father's education
+
+`lwage`: nature log of wage
+]
 ---
+
+# Group excercise (continue)
+
+Please build the following models 
+
+.pull-left[
+
+1. model 1
+
+  1. Build a model to examine the relationship between `hours`, `IQ`, `KWW` and `lwage`
+  
+  2. What is the F value and its meaning?
+  
+  3. What is the `\(R^2\)` of the model, and its meaning?
+
+  4. Interpret the coefficients 
+  
+2. Model 2
+
+  1. Generate a new variable `agesq`, which is the square of `age`
+  
+  2. Besides the variables in model 1, add variables of `educ`, `exper`, `age` and `agesq` to the model
+  
+  3. Answer questions 2, 3, 4
+]
+
+.pull-right[
+1. model 3
+
+  1. add new variables of `married`, `black`, `south`, `urban` to model 2
+  
+  2. Answer questions 2, 3, 4
+  
+  3. Calculate AIC and BIC for all three models
+  
+  4. calculate the VIF for each independent variable
+  
+  4. Among the three models, which one would you like to keep
+]  
+
+---
+
 class: middle, center, inverse
 
-# Results 
-
----
-
-background-image: url("libs/pic/bookshelf.jpg")
-background-size: contain
-background-position: left
-
-class: middle, center, inverse
-
-# .pull-right[.large[Thank you!]] 
+# .large[Thank you!]
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
