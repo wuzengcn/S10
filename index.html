@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Session 10. Multiple linear regression</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Wu Zeng, MD, PhD" />
+    <script src="libs/header-attrs-2.22/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/rladies.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/rladies-fonts.css" rel="stylesheet" />
+    <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset-0.2.6/panelset.js"></script>
+    <script src="libs/fabric-4.3.1/fabric.min.js"></script>
+    <link href="libs/xaringanExtra-scribble-0.0.1/scribble.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-scribble-0.0.1/scribble.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function() { window.xeScribble = new Scribble({"pen_color":["#FF0000"],"pen_size":3,"eraser_size":30,"palette":[]}) })</script>
+    <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view-0.2.6/tile-view.js"></script>
+    <link rel="stylesheet" href="libs/css/hygge-gu.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+class: title-slide, center, middle, inverse
+
+# Session 10. Multiple linear regression
+
+&lt;!--- ### &lt;br/&gt; Subtitle ---&gt;
+
+#### Wu Zeng, MD, PhD
+
+&lt;img src="libs/pic/GU.gif" width="10%" align="center" /&gt; 
+
+#### Department of Global Health
+
+#### Georgetown University
+
+### March 20 2025
+
+---
+
+# Contents 
+
+1. Model specification 
+
+1. Goodness of fit 
+
+2. Test of model and coefficients
+
+2. MLR with dummy variables 
+
+3. MLR with categorical variables 
+
+4. MLR with interaction terms 
+
+&lt;!---5. Regression diagnostics (Normality, independence, multicolinearity) ---&gt;
+
+---
+# Model specification 
+
+`$$y_i = \beta_0 + \beta_1x_1 + \beta_2x2 + ... + \beta_px_p + u_i$$`
+`$$y_i = \hat{y_1} + u_i$$`
+`$$\hat{y_1} = \beta_0 + \beta_1x_1 + \beta_2x2 + ... + \beta_px_p$$`
+
+Assumptions 
+
+1. Linearity 
+
+2. Independence 
+
+3. Conditional means of `\(u_i\)` = 0: `\(E(u_i|x1...x_p) = 0\)`
+
+4. Constant variance of `\(u_i\)`
+
+5. No multicolinearity among `\(xs\)`
+
+---
+
+# Estimation approach and goodness of fit 
+
+OLS can be still used to estimate all `\(\beta\)`s
+
+`\(R^2\)` remains a good measure of the goodness of fit of the model, and has the same meaning as that in the simply regression 
+
+&lt;br&gt; 
+
+&gt; percentage of variance (variation) of `\(y_i\)` are explained by `\(xs\)`
+
+&lt;br&gt;
+
+However, with more independent variables in the model, `\(R^2\)` will keep increasing even the independent variable has very small explanation power. 
+
+`$$\text{Adjusted }R^2 = 1-\frac{(1-R^2)(n-1)}{n-p-1}$$`
+where 
+
+`\(n\)` is sample size;
+
+`\(p\)` number of independent variables
+
+---
+# Test of model
+
+F test is used to test the overall goodness of the fit
+
+&lt;br&gt;
+
+
+&gt; determine whether a significant relationship exists between the dependent variable and the set of .red[all] the independent variables.
+
+---
+
+# F test process
+
+.pull-left[
+
+`\(H_0\)`:  `\(\beta1 = \beta2 = ... = \beta p  = 0\)`
+
+`\(H_1\)`: .red[One or more] of the parameters is not equal to zero.
+
+Statistics 
+
+`$$F = MSE/MSR$$`
+
+Reject `\(H_0\)` if `\(p &lt; \alpha\)`  or if `\(F  &gt; F_{(\alpha, df1, df2)}\)`, where `\(F_{(\alpha, df1, df2)}\)` is based on an `\(F\)` distribution with 
+
+- degree of freedom of `\(p\)` in the numerator, `\(p\)` is the number of independent variables 
+
+- degree of freedom of `\(n - p - 1\)`  in the denominator.
+]
+
+.pull-right[
+
+&lt;img src="index_files/figure-html/unnamed-chunk-1-1.png" height="500" style="display: block; margin: auto;" /&gt;
+]
+---
+
+# Example
+
+
+```
+
+Call:
+lm(formula = mpg ~ am + hp + wt, data = mtcars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.4221 -1.7924 -0.3788  1.2249  5.5317 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 34.002875   2.642659  12.867 2.82e-13 ***
+am           2.083710   1.376420   1.514 0.141268    
+hp          -0.037479   0.009605  -3.902 0.000546 ***
+wt          -2.878575   0.904971  -3.181 0.003574 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.538 on 28 degrees of freedom
+*Multiple R-squared:  0.8399,	Adjusted R-squared:  0.8227 
+*F-statistic: 48.96 on 3 and 28 DF,  p-value: 2.908e-11
+```
+
+---
+
+# Test of individual coefficents 
+
+
+.pull-left[
+
+`\(H_0: \beta_i = 0\)` 
+
+`\(H_1: \beta_i \neq 0\)`
+
+.red[Statistics]
+
+`\(t = \hat{\beta_i}/se_{\hat{\beta_i}}\)`
+
+Reject `\(H_0\)` if `\(p &lt; \alpha\)`  or if `\(t &lt; t_{(\alpha, df)}\)` 
+
+where
+
+`\(t_{(\alpha, df)}\)` is .red[cut-off] based on a `\(t\)` distribution with
+
+- degrees of freedom of .red[n - p - 1]
+]
+
+.pull-right[
+
+
+```
+
+Call:
+lm(formula = mpg ~ am + hp + wt, data = mtcars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.4221 -1.7924 -0.3788  1.2249  5.5317 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 34.002875   2.642659  12.867 2.82e-13 ***
+am           2.083710   1.376420   1.514 0.141268    
+hp          -0.037479   0.009605  -3.902 0.000546 ***
+*wt          -2.878575   0.904971  -3.181 0.003574 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.538 on 28 degrees of freedom
+Multiple R-squared:  0.8399,	Adjusted R-squared:  0.8227 
+F-statistic: 48.96 on 3 and 28 DF,  p-value: 2.908e-11
+```
+]
+
+---
+
+# Interpretation of coefficients
+
+&gt; `\(\beta_i\)` represents an estimate of the .red[change in] `\(y\)`
+&gt; corresponding to a .red[1-unit] increase in `\(x_i\)` when .red[all other independent variables] are held .red[constant].
+
+
+```
+
+Call:
+lm(formula = mpg ~ am + hp + wt, data = mtcars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.4221 -1.7924 -0.3788  1.2249  5.5317 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 34.002875   2.642659  12.867 2.82e-13 ***
+am           2.083710   1.376420   1.514 0.141268    
+hp          -0.037479   0.009605  -3.902 0.000546 ***
+*wt          -2.878575   0.904971  -3.181 0.003574 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.538 on 28 degrees of freedom
+Multiple R-squared:  0.8399,	Adjusted R-squared:  0.8227 
+F-statistic: 48.96 on 3 and 28 DF,  p-value: 2.908e-11
+```
+
+---
+
+# Multiple regression with dummy independent variables 
+
+.pull-left[
+
+`mtcars` dataset
+
+Model specification
+
+- `\(mpg = \beta_0 + \beta_1weight + \beta_2(\text{type of engine})\)`
+
+- `wt` measures the weight of cars
+
+- `am` denote the type of transmission (0 = automatic, 1 = manual)
+
+let us explore the dataset first 
+
+
+```r
+p1 &lt;- ggplot(data = mtcars, mapping = 
+         aes(x = wt, y = mpg, color = factor(am))) +
+  geom_point(size = 3) + 
+  labs(x = "Weight", color = "Type of transmission") +
+  scale_color_discrete(labels = c("Automatic", "Manual")) +
+  theme_classic() +
+  theme(legend.position = "bottom", 
+        text = element_text(size = 20))
+p1
+```
+
+]
+
+.pull-right[
+
+&lt;img src="index_files/figure-html/dtaexp1-1.png" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Continue
+
+.pull-left[
+
+`\(mpg = \beta_0 + \beta_1weight + \beta_2(\text{type of transmission})\)`
+
+`\(mpg_{automatic} = \beta_0 + \beta_1weight + \beta_2*0 = \beta_0 + \beta_1weight\)`
+
+`\(mpg_{manual} = \beta_0 + \beta_1weight + \beta_2*1 = (\beta_0+\beta2) + \beta_1weight\)`
+
+Two straight lines with .red[different intercepts], but the .red[same slope]. 
+
+
+```
+
+Call:
+lm(formula = mpg ~ wt + am, data = mtcars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.5295 -2.3619 -0.1317  1.4025  6.8782 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 37.32155    3.05464  12.218 5.84e-13 ***
+wt          -5.35281    0.78824  -6.791 1.87e-07 ***
+am          -0.02362    1.54565  -0.015    0.988    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 3.098 on 29 degrees of freedom
+Multiple R-squared:  0.7528,	Adjusted R-squared:  0.7358 
+F-statistic: 44.17 on 2 and 29 DF,  p-value: 1.579e-09
+```
+]
+
+.pull-right[
+
+&lt;img src="index_files/figure-html/pdummy-1.png" style="display: block; margin: auto;" /&gt;
+]
+
+---
+
+# Multiple regress with categorical variables 
+
+ &gt; `mtcars`, number of cylinder has only .red[three levels] in the dataset, it cannot be treated as a continous variable. Instead, it should be treated as a categorical variable
+ 
+.pull-left[
+
+```
+# A tibble: 3 × 2
+  cylf   mmpg
+  &lt;fct&gt; &lt;dbl&gt;
+1 4      26.7
+2 6      19.7
+3 8      15.1
+```
+
+```
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = mpg ~ cylf, data = ndt3)
+
+$cylf
+          diff        lwr        upr     p adj
+6-4  -6.920779 -10.769350 -3.0722086 0.0003424
+8-4 -11.563636 -14.770779 -8.3564942 0.0000000
+8-6  -4.642857  -8.327583 -0.9581313 0.0112287
+```
+]
+
+.pull-right[
+
+
+
+
+```r
+ndt3 &lt;- mtcars %&gt;%
+  mutate(cylf = factor(cyl)) 
+lm(mpg ~ cylf, data = ndt3)
+```
+
+```
+
+Call:
+lm(formula = mpg ~ cylf, data = ndt3)
+
+Coefficients:
+(Intercept)        cylf6        cylf8  
+     26.664       -6.921      -11.564  
+```
+
+it created two dummy variables `cylf6` and `cylf8`, and use `cylf4` as reference
+
+`\(mpg = \beta_0 + \beta_1cylf6 + \beta_2cylf8\)`
+]
+ 
+---
+
+# Adding other co-variates
+
+Model specification: `\(mpg = \beta_0 + \beta_1weight + \beta_2\text{type of transmission} + \beta_3\text{type of engine} + \beta_4{cylinder}\)`
+
+.pull-left[
+
+```r
+ndt3 &lt;- mtcars %&gt;%
+  mutate(cylf = factor(cyl)) 
+lm(mpg ~ wt + am + vs + cylf, data = ndt3) %&gt;%
+  summary()
+```
+]
+
+.pull-right[
+
+
+```
+
+Call:
+lm(formula = mpg ~ wt + am + vs + cylf, data = ndt3)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.2664 -1.2947 -0.3387  1.3908  5.5535 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  32.1811     3.7286   8.631 4.14e-09 ***
+wt           -3.1061     0.9203  -3.375  0.00233 ** 
+am            0.6232     1.5012   0.415  0.68144    
+vs            1.2418     1.9042   0.652  0.52004    
+cylf6        -3.7329     1.6376  -2.280  0.03108 *  
+cylf8        -4.7483     2.6572  -1.787  0.08561 .  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.631 on 26 degrees of freedom
+Multiple R-squared:  0.8401,	Adjusted R-squared:  0.8094 
+F-statistic: 27.33 on 5 and 26 DF,  p-value: 1.417e-09
+```
+]
+
+---
+
+# Multiple regression with interaction terms
+
+- Previously, we examined `\(mpg = \beta_0 + \beta_1weight + \beta_2(\text{type of engine})\)`
+
+- Now, - `\(mpg = \beta_0 + \beta_1weight + \beta_2(\text{type of engine}) + \beta_3weight*\text{type of engine}\)`
+
+.pull-left[
+
+```r
+lm(mpg ~ wt*vs, data = mtcars) %&gt;%
+  summary()
+```
+
+&lt;img src="index_files/figure-html/pdummy-1.png" height="350" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+
+
+```
+
+Call:
+lm(formula = mpg ~ wt * vs, data = mtcars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.9950 -1.7881 -0.3423  1.2935  5.2061 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  29.5314     2.6221  11.263 6.55e-12 ***
+wt           -3.5013     0.6915  -5.063 2.33e-05 ***
+vs           11.7667     3.7638   3.126   0.0041 ** 
+*wt:vs        -2.9097     1.2157  -2.393   0.0236 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.578 on 28 degrees of freedom
+Multiple R-squared:  0.8348,	Adjusted R-squared:  0.8171 
+F-statistic: 47.16 on 3 and 28 DF,  p-value: 4.497e-11
+```
+]
+---
+
+# How to interpret coefficients for variables with the interaction term 
+
+`\(mpg = \beta_0 + \beta_1weight + \beta_2(\text{type of engine}) + \beta_3weight*\text{type of engine}\)`
+
+.pull-left[
+
+
+```
+
+Call:
+lm(formula = mpg ~ wt * vs, data = mtcars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.9950 -1.7881 -0.3423  1.2935  5.2061 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  29.5314     2.6221  11.263 6.55e-12 ***
+wt           -3.5013     0.6915  -5.063 2.33e-05 ***
+vs           11.7667     3.7638   3.126   0.0041 ** 
+*wt:vs        -2.9097     1.2157  -2.393   0.0236 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.578 on 28 degrees of freedom
+Multiple R-squared:  0.8348,	Adjusted R-squared:  0.8171 
+F-statistic: 47.16 on 3 and 28 DF,  p-value: 4.497e-11
+```
+]
+
+.pull-right[
+
+The impact of `weight` and `type of engine` on `mpg` is .red[not] a constant. They depends on each other. 
+
+`\(\beta_1\)` is the impact of weight on `mpg` when `type of engine = 0`
+
+`\(\beta_2\)` is the impact of the `type of engine` on `mpg` when `weight = 0`
+
+.red[Marginal effect]:
+
+`\(\frac{\partial (mpg)}{\partial (weight)} = \beta_1 + \beta_3*\text{type of engine}\)`
+
+`\(\frac{\partial (mpg)}{\partial (\text{type of engine})} = \beta_2 + \beta_3*\text{weight}\)`
+
+]
+---
+exclude: true
+
+# Multicollinearity 
+
+- The term of .red[multicollinearity] refers to the correlation among the .red[independent variables].
+
+- In multiple regression model, the independent variables should not be .red[highly] correlated. 
+
+Potential three consequences 
+
+- The model cannot be estimated 
+
+- the standard error of correlated variables are extremely large 
+
+- the signs of correlated variables are not in the expected direction
+
+Variance inflation factor (VIF) is used to check the existence of multicollinearity 
+
+---
+exclude: true
+
+# Measurement of multicollinearity (Variance inflation factor) 
+
+.pull-left[
+
+`$$VIF = \frac{1}{1-R^2_i}$$`
+
+where 
+
+`$$R^2_1 \text{ is estimated from } x_i = \beta_0 + \beta x_{others}$$`
+There is no unanimous cut-off of VIF. I use `10`
+
+What do we do if there are variables with large VIF 
+
+- Delete one of correlated variables
+
+- Combine correlated variables using different approaches
+
+`r` command 
+
+`vif(model)` in the package of `car`
+]
+
+.pull-right[
+
+
+```r
+#install.packages("car")
+ndt3 &lt;- mtcars %&gt;%
+  mutate(cylf = factor(cyl)) 
+lmres &lt;- lm(mpg ~ wt + am + vs + cylf, data = ndt3) 
+car::vif(lmres)
+```
+
+```
+         GVIF Df GVIF^(1/(2*Df))
+wt   3.630316  1        1.905339
+am   2.512374  1        1.585047
+vs   4.124032  1        2.030771
+cylf 6.424665  2        1.592072
+```
+
+]
+---
+exclude: true
+
+# Diangostic test (focus on residuals)
+
+Residual plot against `\(\hat{y}\)`to determine if the model assumptions are satisfied.
+
+.left-column[
+
+
+```r
+par(mfrow=c(2,2))
+plot(lmres)
+```
+]
+
+.right-column[
+
+&lt;img src="index_files/figure-html/dia1-1.png" height="450" style="display: block; margin: auto;" /&gt;
+]
+
+---
+
+# Choose among many models 
+
+- Adjusted `\(R^2\)`
+
+- Akaike information criterion (AIC) (the smaller the better): `AIC(model)`
+
+- Bayesian information criterion (BIC) (the smaller the better): `BIC(model)`
+
+.pull-left[
+
+
+```r
+mtcars2 &lt;- mtcars %&gt;%
+  mutate(cylf = factor(cyl))
+m1 &lt;- lm(mpg ~ am , data = mtcars2)
+m2 &lt;- lm(mpg ~ am + wt, data = mtcars2)
+m3 &lt;- lm(mpg ~ am + wt + hp, data = mtcars2)
+m4 &lt;- lm(mpg ~ am + wt + hp + I(wt*hp),
+         data = mtcars2)
+m5 &lt;- lm(mpg ~ am + wt + hp + I(wt*hp) + cylf, 
+         data = mtcars2)
+```
+]
+
+.pull-right[
+
+```r
+print(AIC(m1))
+```
+
+```
+[1] 196.4844
+```
+
+```r
+print(AIC(m2))
+```
+
+```
+[1] 168.0292
+```
+
+```r
+print(AIC(m3))
+```
+
+```
+[1] 156.1348
+```
+
+```r
+print(AIC(m4))
+```
+
+```
+[1] 147.6004
+```
+
+```r
+print(AIC(m5))
+```
+
+```
+[1] 150.6882
+```
+
+
+]
+---
+
+# Result comparison
+
+&lt;style type="text/css"&gt;
+table {
+  font-size: 13px;     
+}
+&lt;/style&gt;
+
+
+&lt;table style="text-align:center"&gt;&lt;tr&gt;&lt;td colspan="6" style="border-bottom: 1px solid black"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style="text-align:left"&gt;&lt;/td&gt;&lt;td colspan="5"&gt;mpg&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td style="text-align:left"&gt;&lt;/td&gt;&lt;td&gt;(1)&lt;/td&gt;&lt;td&gt;(2)&lt;/td&gt;&lt;td&gt;(3)&lt;/td&gt;&lt;td&gt;(4)&lt;/td&gt;&lt;td&gt;(5)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td colspan="6" style="border-bottom: 1px solid black"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style="text-align:left"&gt;am&lt;/td&gt;&lt;td&gt;7.245&lt;sup&gt;***&lt;/sup&gt; (1.764)&lt;/td&gt;&lt;td&gt;-0.024 (1.546)&lt;/td&gt;&lt;td&gt;2.084 (1.376)&lt;/td&gt;&lt;td&gt;0.125 (1.333)&lt;/td&gt;&lt;td&gt;0.190 (1.491)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td style="text-align:left"&gt;wt&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;-5.353&lt;sup&gt;***&lt;/sup&gt; (0.788)&lt;/td&gt;&lt;td&gt;-2.879&lt;sup&gt;***&lt;/sup&gt; (0.905)&lt;/td&gt;&lt;td&gt;-8.101&lt;sup&gt;***&lt;/sup&gt; (1.789)&lt;/td&gt;&lt;td&gt;-7.122&lt;sup&gt;***&lt;/sup&gt; (2.237)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td style="text-align:left"&gt;hp&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;-0.037&lt;sup&gt;***&lt;/sup&gt; (0.010)&lt;/td&gt;&lt;td&gt;-0.119&lt;sup&gt;***&lt;/sup&gt; (0.027)&lt;/td&gt;&lt;td&gt;-0.102&lt;sup&gt;***&lt;/sup&gt; (0.034)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td style="text-align:left"&gt;I(wt * hp)&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;0.027&lt;sup&gt;***&lt;/sup&gt; (0.008)&lt;/td&gt;&lt;td&gt;0.023&lt;sup&gt;**&lt;/sup&gt; (0.010)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td style="text-align:left"&gt;cylf6&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;-1.282 (1.529)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td style="text-align:left"&gt;cylf8&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;-1.394 (2.156)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td style="text-align:left"&gt;Constant&lt;/td&gt;&lt;td&gt;17.147&lt;sup&gt;***&lt;/sup&gt; (1.125)&lt;/td&gt;&lt;td&gt;37.322&lt;sup&gt;***&lt;/sup&gt; (3.055)&lt;/td&gt;&lt;td&gt;34.003&lt;sup&gt;***&lt;/sup&gt; (2.643)&lt;/td&gt;&lt;td&gt;49.452&lt;sup&gt;***&lt;/sup&gt; (5.281)&lt;/td&gt;&lt;td&gt;46.801&lt;sup&gt;***&lt;/sup&gt; (6.367)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td colspan="6" style="border-bottom: 1px solid black"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style="text-align:left"&gt;Observations&lt;/td&gt;&lt;td&gt;32&lt;/td&gt;&lt;td&gt;32&lt;/td&gt;&lt;td&gt;32&lt;/td&gt;&lt;td&gt;32&lt;/td&gt;&lt;td&gt;32&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td style="text-align:left"&gt;R&lt;sup&gt;2&lt;/sup&gt;&lt;/td&gt;&lt;td&gt;0.360&lt;/td&gt;&lt;td&gt;0.753&lt;/td&gt;&lt;td&gt;0.840&lt;/td&gt;&lt;td&gt;0.885&lt;/td&gt;&lt;td&gt;0.888&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td style="text-align:left"&gt;Adjusted R&lt;sup&gt;2&lt;/sup&gt;&lt;/td&gt;&lt;td&gt;0.338&lt;/td&gt;&lt;td&gt;0.736&lt;/td&gt;&lt;td&gt;0.823&lt;/td&gt;&lt;td&gt;0.868&lt;/td&gt;&lt;td&gt;0.861&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td style="text-align:left"&gt;Residual Std. Error&lt;/td&gt;&lt;td&gt;4.902 (df = 30)&lt;/td&gt;&lt;td&gt;3.098 (df = 29)&lt;/td&gt;&lt;td&gt;2.538 (df = 28)&lt;/td&gt;&lt;td&gt;2.192 (df = 27)&lt;/td&gt;&lt;td&gt;2.246 (df = 25)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td style="text-align:left"&gt;F Statistic&lt;/td&gt;&lt;td&gt;16.860&lt;sup&gt;***&lt;/sup&gt; (df = 1; 30)&lt;/td&gt;&lt;td&gt;44.165&lt;sup&gt;***&lt;/sup&gt; (df = 2; 29)&lt;/td&gt;&lt;td&gt;48.960&lt;sup&gt;***&lt;/sup&gt; (df = 3; 28)&lt;/td&gt;&lt;td&gt;51.844&lt;sup&gt;***&lt;/sup&gt; (df = 4; 27)&lt;/td&gt;&lt;td&gt;33.049&lt;sup&gt;***&lt;/sup&gt; (df = 6; 25)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td colspan="6" style="border-bottom: 1px solid black"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style="text-align:left"&gt;&lt;em&gt;Note:&lt;/em&gt;&lt;/td&gt;&lt;td colspan="5" style="text-align:right"&gt;&lt;sup&gt;*&lt;/sup&gt;p&lt;0.1; &lt;sup&gt;**&lt;/sup&gt;p&lt;0.05; &lt;sup&gt;***&lt;/sup&gt;p&lt;0.01&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+---
+
+# Group excercise
+
+use the data from http://people.brandeis.edu/~wuzengcn/ecodata/WAGE2.DTA. Import data into r
+
+
+```r
+wagedta &lt;- foreign::read.dta("http://people.brandeis.edu/~wuzengcn/ecodata/WAGE2.DTA")
+```
+
+.pull-left[
+
+`wage`: Monthly earnings
+
+`hours`: average weekly hours
+
+`IQ`: IQ score
+
+`KWW`: knowledge of world work score
+
+`educ`: years of education 
+
+`exper`: years of work experience
+
+`tenure`: years with current employer
+
+`age` : ae in years
+
+]
+
+.pull-right[
+`married`: = 1 if married
+
+`black`: = 1 if black
+
+`south`: = 1 if live in south
+
+`urban`: =1 if live in urban areas
+
+`sibs`: number of siblings
+
+`brthord`: birth order 
+
+`meduc`: mother's education
+
+`feduc`: father's education
+
+`lwage`: nature log of wage
+]
+---
+
+# Group excercise (continue)
+
+Please build the following models 
+
+.pull-left[
+
+1. model 1
+
+  1. Build a model to examine the relationship between `hours`, `IQ`, `KWW` and `lwage`
+  
+  2. What is the F value and its meaning?
+  
+  3. What is the `\(R^2\)` of the model, and its meaning?
+
+  4. Interpret the coefficients 
+  
+2. Model 2
+
+  1. Generate a new variable `agesq`, which is the square of `age`
+  
+  2. Besides the variables in model 1, add variables of `educ`, `exper`, `age` and `agesq` to the model
+  
+  3. Answer questions 2, 3, 4
+]
+
+.pull-right[
+1. model 3
+
+  1. add new variables of `married`, `black`, `south`, `urban` to model 2
+  
+  2. Answer questions 2, 3, 4
+  
+  3. Calculate AIC and BIC for all three models
+  
+  4. calculate the VIF for each independent variable
+  
+  4. Among the three models, which one would you like to keep
+]  
+
+---
+
+class: middle, center, inverse
+
+# .large[Thank you!]
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
